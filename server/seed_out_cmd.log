@@ -1,0 +1,59 @@
+🌱 Seeding DigitalEra database...
+
+✅ Admin user created: admin@digitalera.com (password: admin123)
+✅ 6 categories created
+✅ 10 tags created
+❌ Seeding failed: PrismaClientValidationError: 
+Invalid `prisma.article.upsert()` invocation in
+C:\Users\Kalia Muduli\Documents\MyTechBlog\server\prisma\seed.js:370:26
+
+  367 
+  368 for (const articleData of articles) {
+  369   const { tags: tagConnect, ...data } = articleData;
+→ 370   await prisma.article.upsert({
+          where: {
+            slug: "getting-started-with-react-18"
+          },
+          update: {},
+          create: {
+            title: "Getting Started with React 18: A Complete Guide",
+            slug: "getting-started-with-react-18",
+            excerpt: "Learn the fundamentals of React 18 including concurrent features, automatic batching, and new hooks that make building UIs more efficient.",
+            content: "<h2>Introduction to React 18</h2>\n<p>React 18 introduces several groundbreaking features that fundamentally change how we build user interfaces. In this comprehensive guide, we'll explore the key features and how to get started.</p>\n\n<h3>Concurrent Rendering</h3>\n<p>The biggest addition in React 18 is concurrent rendering. This allows React to prepare multiple versions of the UI at the same time. It's not a feature per se, but a new behind-the-scenes mechanism that enables React to prepare UI updates without blocking the main thread.</p>\n\n<h3>Automatic Batching</h3>\n<p>React 18 introduces automatic batching for all state updates, regardless of where they originate. Previously, React only batched updates inside React event handlers. Now, updates inside timeouts, promises, native event handlers, and any other event are batched automatically.</p>\n\n<pre><code class=\"language-javascript\">\n// Before React 18 - these would cause two re-renders\nsetTimeout(() => {\n  setCount(c => c + 1);\n  setFlag(f => !f);\n}, 1000);\n\n// In React 18 - these are automatically batched into one re-render\n</code></pre>\n\n<h3>New Hooks</h3>\n<p><strong>useId</strong>: Generates unique IDs that are stable across server and client rendering.</p>\n<p><strong>useTransition</strong>: Marks updates as transitions, telling React they can be interrupted.</p>\n<p><strong>useDeferredValue</strong>: Lets you defer re-rendering a non-urgent part of the tree.</p>\n\n<h3>Getting Started</h3>\n<p>To start using React 18, simply update your project:</p>\n<pre><code class=\"language-bash\">npm install react@18 react-dom@18</code></pre>\n\n<h3>Conclusion</h3>\n<p>React 18 is a significant milestone that brings concurrent features to the mainstream. By adopting these new capabilities, you can create more responsive user experiences while keeping your codebase clean and maintainable.</p>",
+            categoryId: 3,
+            authorId: 1,
+            status: "PUBLISHED",
+            publishedAt: new Date("2024-01-15T00:00:00.000Z"),
+            metaTitle: "Getting Started with React 18 - Complete Guide | DigitalEra",
+            metaDesc: "Learn React 18 fundamentals including concurrent features, automatic batching, and new hooks.",
+            views: 1523,
+            connect: [
+            ~~~~~~~
+              {
+                id: 2
+              },
+              {
+                id: 1
+              },
+              {
+                id: 10
+              }
+            ],
+        ?   id?: Int,
+        ?   featuredImage?: String | Null,
+        ?   createdAt?: DateTime,
+        ?   updatedAt?: DateTime,
+        ?   tags?: TagUncheckedCreateNestedManyWithoutArticlesInput,
+        ?   comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+          }
+        })
+
+Unknown argument `connect`. Did you mean `content`? Available options are marked with ?.
+    at Nn (C:\Users\Kalia Muduli\Documents\MyTechBlog\server\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\Kalia Muduli\Documents\MyTechBlog\server\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\Kalia Muduli\Documents\MyTechBlog\server\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\Kalia Muduli\Documents\MyTechBlog\server\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\Kalia Muduli\Documents\MyTechBlog\server\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async main (C:\Users\Kalia Muduli\Documents\MyTechBlog\server\prisma\seed.js:370:5) {
+  clientVersion: '6.19.3'
+}
