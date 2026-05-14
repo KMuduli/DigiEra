@@ -47,13 +47,23 @@ const Navbar = () => {
               </button>
             </form>
             {user ? (
-              <Link to="/admin/dashboard" className="flex items-center text-slate-600 hover:text-primary-600">
-                <User size={20} className="mr-1" />
-                <span className="text-sm font-medium">Admin</span>
-              </Link>
+              <div className="flex items-center space-x-4">
+                {user.role === 'ADMIN' && (
+                  <Link to="/admin/dashboard" className="text-sm font-bold text-slate-600 hover:text-primary-600">
+                    Dashboard
+                  </Link>
+                )}
+                <div className="flex items-center text-slate-900 border border-slate-200 rounded-full pl-1 pr-3 py-1 bg-slate-50">
+                  <div className="w-6 h-6 rounded-full bg-primary-600 text-white flex items-center justify-center text-[10px] font-black mr-2">
+                    {user.name.charAt(0)}
+                  </div>
+                  <span className="text-sm font-black tracking-tight">{user.name.split(' ')[0]}</span>
+                </div>
+              </div>
             ) : (
-              <Link to="/admin/login" className="text-slate-400 hover:text-slate-600">
-                <User size={20} />
+              <Link to="/admin/login" className="flex items-center text-slate-600 hover:text-primary-600 border border-slate-200 px-4 py-1.5 rounded-full transition-all hover:bg-slate-50">
+                <User size={18} className="mr-2" />
+                <span className="text-sm font-black tracking-tight">Login</span>
               </Link>
             )}
           </div>

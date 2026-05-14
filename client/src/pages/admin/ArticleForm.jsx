@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import api from '../../api/api';
 import Spinner from '../../components/Spinner';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+// import ReactQuill from 'react-quill';
+// import 'react-quill/dist/quill.snow.css';
 import { 
   ChevronLeft, 
   Save, 
@@ -200,12 +200,12 @@ const ArticleForm = () => {
               onChange={handleInputChange}
             />
             
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px]">
-              <ReactQuill 
-                theme="snow" 
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px] flex">
+              <textarea 
+                className="w-full p-8 outline-none resize-none leading-relaxed text-lg"
+                placeholder="Write your masterpiece here..."
                 value={formData.content} 
-                onChange={handleQuillChange}
-                modules={quillModules}
+                onChange={(e) => handleQuillChange(e.target.value)}
               />
             </div>
           </div>

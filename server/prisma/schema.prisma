@@ -14,7 +14,7 @@ model User {
   email     String    @unique
   password  String
   name      String
-  role      Role      @default(ADMIN)
+  role      Role      @default(READER)
   avatar    String?
   articles  Article[]
   createdAt DateTime  @default(now())
@@ -87,6 +87,7 @@ model Comment {
 enum Role {
   ADMIN
   EDITOR
+  READER
 }
 
 enum Status {

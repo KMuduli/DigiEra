@@ -11,10 +11,12 @@ const Article = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const { user } = useAuth();
+  
   // Comment form state
   const [commentData, setCommentData] = useState({
-    authorName: '',
-    authorEmail: '',
+    authorName: user?.name || '',
+    authorEmail: user?.email || '',
     content: ''
   });
   const [submittingComment, setSubmittingComment] = useState(false);
@@ -198,7 +200,17 @@ const Article = () => {
             <div className="mt-12 pt-10 border-t border-slate-100">
               <h3 className="text-xl font-bold text-slate-900 mb-6 tracking-tight">Add your thoughts</h3>
               
-              {commentSuccess ? (
+              {!user ? (
+                <div className="text-center py-12 px-6 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">
+                  <User className="mx-auto text-slate-300 mb-4" size={32} />
+                  <p className="text-slate-900 font-black mb-2 tracking-tight">Login to make a comment</p>
+                  <p className="text-slate-500 text-sm mb-6 max-w-xs mx-auto font-medium">Join our community of developers to share your thoughts and insights.</p>
+                  <div className="flex justify-center space-x-3">
+                    <Link to="/admin/login" className="btn btn-primary px-6 text-sm font-black">Log In</Link>
+                    <Link to="/register" className="btn btn-secondary px-6 text-sm font-black">Register</Link>
+                  </div>
+                </div>
+              ) : commentSuccess ? (
                 <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-xl text-sm font-bold">
                   Thank you! Your comment has been submitted and is awaiting moderation.
                 </div>
@@ -209,19 +221,17 @@ const Article = () => {
                       type="text" 
                       name="authorName"
                       placeholder="Your Name" 
-                      className="admin-input" 
+                      className="admin-input bg-slate-50 border-slate-100 opacity-70" 
                       value={commentData.authorName}
-                      onChange={handleCommentChange}
-                      required
+                      disabled
                     />
                     <input 
                       type="email" 
                       name="authorEmail"
                       placeholder="Your Email" 
-                      className="admin-input" 
+                      className="admin-input bg-slate-50 border-slate-100 opacity-70" 
                       value={commentData.authorEmail}
-                      onChange={handleCommentChange}
-                      required
+                      disabled
                     />
                   </div>
                   <textarea 
@@ -236,7 +246,7 @@ const Article = () => {
                   <button 
                     type="submit" 
                     disabled={submittingComment}
-                    className="btn btn-primary px-8 flex items-center"
+                    className="btn btn-primary px-8 flex items-center font-black"
                   >
                     {submittingComment ? 'Posting...' : 'Post Comment'}
                   </button>

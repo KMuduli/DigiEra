@@ -12,6 +12,7 @@ import Home from './pages/public/Home';
 import Article from './pages/public/Article';
 import Category from './pages/public/Category';
 import Search from './pages/public/Search';
+import Register from './pages/public/Register';
 
 // Admin Pages
 import Login from './pages/admin/Login';
@@ -57,6 +58,7 @@ function App() {
 
             {/* Admin Auth */}
             <Route path="/admin/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
             {/* Admin Routes (Protected via AdminLayout) */}
             <Route path="/admin" element={<AdminLayout />}>
