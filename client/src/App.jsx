@@ -13,6 +13,9 @@ import Article from './pages/public/Article';
 import Category from './pages/public/Category';
 import Search from './pages/public/Search';
 import Register from './pages/public/Register';
+import About from './pages/public/About';
+import Contact from './pages/public/Contact';
+import Trending from './pages/public/Trending';
 
 // Admin Pages
 import Login from './pages/admin/Login';
@@ -21,6 +24,7 @@ import ArticleList from './pages/admin/ArticleList';
 import ArticleForm from './pages/admin/ArticleForm';
 import CategoryManager from './pages/admin/CategoryManager';
 import CommentModerator from './pages/admin/CommentModerator';
+import PageManager from './pages/admin/PageManager';
 
 // Scroll to top helper
 import { useEffect } from 'react';
@@ -55,6 +59,9 @@ function App() {
             <Route path="/article/:slug" element={<PublicLayout><Article /></PublicLayout>} />
             <Route path="/category/:slug" element={<PublicLayout><Category /></PublicLayout>} />
             <Route path="/search" element={<PublicLayout><Search /></PublicLayout>} />
+            <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+            <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+            <Route path="/trending" element={<PublicLayout><Trending /></PublicLayout>} />
 
             {/* Admin Auth */}
             <Route path="/admin/login" element={<Login />} />
@@ -69,6 +76,7 @@ function App() {
               {/* Optional: Add Category/Tag/Comment management here */}
               <Route path="categories" element={<CategoryManager />} />
               <Route path="comments" element={<CommentModerator />} />
+              <Route path="pages" element={<PageManager />} />
             </Route>
 
             {/* Fallback */}

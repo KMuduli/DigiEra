@@ -10,7 +10,7 @@ const { getPagination, paginationMeta } = require('../utils/pagination');
 const getArticles = async (req, res, next) => {
   try {
     const { skip, take, page, limit } = getPagination(req.query);
-    const { category, tag, search } = req.query;
+    const { category, tag, search, sort } = req.query;
 
     const where = { status: 'PUBLISHED' };
 
@@ -30,12 +30,14 @@ const getArticles = async (req, res, next) => {
       ];
     }
 
+    const orderBy = sort === 'trending' ? { views: 'desc' } : { publishedAt: 'desc' };
+
     const [articles, total] = await Promise.all([
       prisma.article.findMany({
         where,
         skip,
         take,
-        orderBy: { publishedAt: 'desc' },
+        orderBy,
         include: {
           author: { select: { id: true, name: true, avatar: true } },
           category: { select: { id: true, name: true, slug: true } },

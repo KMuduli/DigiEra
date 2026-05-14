@@ -200,10 +200,14 @@ const ArticleForm = () => {
               onChange={handleInputChange}
             />
             
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px] flex">
+            <div className="bg-slate-900 rounded-xl shadow-inner border border-slate-800 overflow-hidden min-h-[500px] flex flex-col">
+              <div className="bg-slate-800 text-slate-400 text-xs font-black uppercase tracking-widest px-4 py-2 border-b border-slate-700 flex justify-between items-center">
+                <span>HTML Source Code</span>
+                <span>Format: Pure HTML</span>
+              </div>
               <textarea 
-                className="w-full p-8 outline-none resize-none leading-relaxed text-lg"
-                placeholder="Write your masterpiece here..."
+                className="w-full h-full min-h-[500px] p-6 outline-none resize-y leading-loose text-sm font-mono bg-transparent text-emerald-400 placeholder:text-slate-600 focus:ring-0"
+                placeholder="Write your article in HTML here..."
                 value={formData.content} 
                 onChange={(e) => handleQuillChange(e.target.value)}
               />

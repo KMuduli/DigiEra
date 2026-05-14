@@ -12,7 +12,11 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/admin/dashboard');
+      if (user.role === 'ADMIN') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     }
   }, [user, navigate]);
 
@@ -21,9 +25,8 @@ const Login = () => {
     try {
       setSubmitting(true);
       await login(email, password);
-      // Success is handled by useEffect
     } catch (err) {
-      // Error is handled by context state
+      // Error handled by context
     } finally {
       setSubmitting(false);
     }
@@ -37,13 +40,13 @@ const Login = () => {
         </Link>
         <div className="bg-white py-10 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-slate-200">
           <div className="mb-8">
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Admin Login</h2>
-            <p className="text-sm text-slate-500 mt-1">Access the DigitalEra CMS dashboard</p>
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Login</h2>
+            <p className="text-sm text-slate-500 mt-1">Sign in to your account to participate and comment</p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             {authError && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm flex items-start">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm flex items-start font-bold">
                 <AlertCircle size={18} className="mr-2 shrink-0 mt-0.5" />
                 <span>{authError}</span>
               </div>
@@ -57,7 +60,7 @@ const Login = () => {
                   type="email"
                   required
                   className="admin-input pl-10"
-                  placeholder="admin@digitalera.com"
+                  placeholder="name@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -82,14 +85,20 @@ const Login = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full btn btn-primary py-3 text-lg flex items-center justify-center"
+              className="w-full btn btn-primary py-3 text-lg flex items-center justify-center font-black"
             >
               {submitting ? <Loader2 className="animate-spin mr-2" size={20} /> : 'Sign In'}
             </button>
           </form>
 
-          <div className="mt-8 pt-8 border-t border-slate-100 text-center">
-            <Link to="/" className="text-sm font-medium text-slate-400 hover:text-primary-600">
+          <div className="mt-8 pt-8 border-t border-slate-100 text-center space-y-4">
+            <p className="text-sm font-bold text-slate-500">
+              Don't have an account?{' '}
+              <Link to="/register" className="text-primary-600 hover:underline">
+                Create one now
+              </Link>
+            </p>
+            <Link to="/" className="text-sm font-medium text-slate-400 hover:text-primary-600 block">
               Return to public website
             </Link>
           </div>

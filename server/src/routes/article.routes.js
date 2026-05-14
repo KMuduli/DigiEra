@@ -11,7 +11,7 @@ const {
   deleteArticle,
   getStats,
 } = require('../controllers/article.controller');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, authorize } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const { createArticleSchema, updateArticleSchema } = require('../utils/schemas');
 
@@ -49,7 +49,7 @@ router.get('/', getArticles);
  *     responses:
  *       200: { description: Dashboard stats }
  */
-router.get('/stats', authenticate, getStats);
+router.get('/stats', authenticate, authorize('ADMIN'), getStats);
 
 /**
  * @swagger
@@ -61,7 +61,7 @@ router.get('/stats', authenticate, getStats);
  *     responses:
  *       200: { description: All articles }
  */
-router.get('/admin', authenticate, getAdminArticles);
+router.get('/admin', authenticate, authorize('ADMIN'), getAdminArticles);
 
 /**
  * @swagger
@@ -78,7 +78,7 @@ router.get('/admin', authenticate, getAdminArticles);
  *     responses:
  *       200: { description: Article details }
  */
-router.get('/admin/:id', authenticate, getArticleById);
+router.get('/admin/:id', authenticate, authorize('ADMIN'), getArticleById);
 
 /**
  * @swagger
@@ -104,7 +104,7 @@ router.get('/admin/:id', authenticate, getArticleById);
  *     responses:
  *       201: { description: Article created }
  */
-router.post('/', authenticate, validate(createArticleSchema), createArticle);
+router.post('/', authenticate, authorize('ADMIN'), validate(createArticleSchema), createArticle);
 
 /**
  * @swagger
@@ -121,7 +121,7 @@ router.post('/', authenticate, validate(createArticleSchema), createArticle);
  *     responses:
  *       200: { description: Article updated }
  */
-router.put('/:id', authenticate, validate(updateArticleSchema), updateArticle);
+router.put('/:id', authenticate, authorize('ADMIN'), validate(updateArticleSchema), updateArticle);
 
 /**
  * @swagger
@@ -138,7 +138,7 @@ router.put('/:id', authenticate, validate(updateArticleSchema), updateArticle);
  *     responses:
  *       200: { description: Article deleted }
  */
-router.delete('/:id', authenticate, deleteArticle);
+router.delete('/:id', authenticate, authorize('ADMIN'), deleteArticle);
 
 /**
  * @swagger

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../api/api';
+import { useAuth } from '../../context/AuthContext';
 import ArticleCard from '../../components/ArticleCard';
 import Spinner from '../../components/Spinner';
 import SEOHead from '../../components/SEOHead';
@@ -8,6 +10,7 @@ import { Newspaper, Zap, TrendingUp } from 'lucide-react';
 const Home = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -43,8 +46,19 @@ const Home = () => {
             Deep dives into modern frameworks, development best practices, and the future of artificial intelligence.
           </p>
           <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-            <a href="#latest" className="btn btn-primary px-8 py-3 text-lg">Start Reading</a>
-            <a href="/category/programming" className="btn btn-secondary px-8 py-3 text-lg">Tutorials</a>
+            <a href="#latest" className="btn btn-primary px-8 py-3 text-lg font-black">Start Reading</a>
+            {!user ? (
+              <>
+                <Link to="/register" className="btn btn-secondary px-8 py-3 text-lg font-black border-2 border-primary-600 text-primary-600 hover:bg-primary-50">
+                  New? Join Us
+                </Link>
+                <Link to="/admin/login" className="px-8 py-3 text-lg font-black text-slate-400 hover:text-primary-600 transition-colors">
+                  Login
+                </Link>
+              </>
+            ) : (
+              <a href="/category/programming" className="btn btn-secondary px-8 py-3 text-lg font-black">Tutorials</a>
+            )}
           </div>
         </div>
         <div className="flex-1 hidden lg:block relative">

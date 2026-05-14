@@ -29,7 +29,7 @@ const ArticleCard = ({ article }) => {
         <div className="flex items-center space-x-4 text-xs text-slate-400 mb-3">
           <div className="flex items-center">
             <User size={14} className="mr-1" />
-            <span>{author?.name || 'Admin'}</span>
+            <span>{author?.name || 'DigitalEra Team'}</span>
           </div>
           <div className="flex items-center">
             <Calendar size={14} className="mr-1" />

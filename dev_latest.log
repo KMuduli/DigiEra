@@ -62,3 +62,34 @@
 [dev:server] 
 [dev:server] Node.js v24.14.0
 [dev:server] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[dev:server] [32m[nodemon] restarting due to changes...[39m
+[dev:server] [32m[nodemon] starting `node src/index.js`[39m
+[dev:server] (node:26544) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+[dev:server] (Use `node --trace-deprecation ...` to show where the warning was created)
+[dev:server] node:events:486
+[dev:server]       throw er; // Unhandled 'error' event
+[dev:server]       ^
+[dev:server] 
+[dev:server] Error: listen EADDRINUSE: address already in use :::5000
+[dev:server]     at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+[dev:server]     at listenInCluster (node:net:2005:12)
+[dev:server]     at Server.listen (node:net:2110:7)
+[dev:server]     at app.listen (C:\Users\Kalia Muduli\Documents\MyTechBlog\server\node_modules\express\lib\application.js:635:24)
+[dev:server]     at Object.<anonymous> (C:\Users\Kalia Muduli\Documents\MyTechBlog\server\src\index.js:10:7)
+[dev:server]     at Module._compile (node:internal/modules/cjs/loader:1812:14)
+[dev:server]     at Object..js (node:internal/modules/cjs/loader:1943:10)
+[dev:server]     at Module.load (node:internal/modules/cjs/loader:1533:32)
+[dev:server]     at Module._load (node:internal/modules/cjs/loader:1335:12)
+[dev:server]     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+[dev:server] Emitted 'error' event on Server instance at:
+[dev:server]     at emitErrorNT (node:net:1984:8)
+[dev:server]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[dev:server]   code: 'EADDRINUSE',
+[dev:server]   errno: -4091,
+[dev:server]   syscall: 'listen',
+[dev:server]   address: '::',
+[dev:server]   port: 5000
+[dev:server] }
+[dev:server] 
+[dev:server] Node.js v24.14.0
+[dev:server] [31m[nodemon] app crashed - waiting for file changes before starting...[39m

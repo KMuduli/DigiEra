@@ -18,6 +18,7 @@ const categoryRoutes = require('./routes/category.routes');
 const tagRoutes = require('./routes/tag.routes');
 const uploadRoutes = require('./routes/upload.routes');
 const commentRoutes = require('./routes/comment.routes');
+const pageRoutes = require('./routes/page.routes');
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/pages', pageRoutes);
 
 // ─── Health Check ───
 app.get('/api/health', (req, res) => {

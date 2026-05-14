@@ -101,18 +101,18 @@ const CommentModerator = () => {
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-start space-x-4">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm shadow-sm ${comment.approved ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                      {comment.authorName.charAt(0)}
+                      {(comment.user?.name || comment.authorName || 'U').charAt(0)}
                     </div>
                     <div>
                       <h4 className="font-black text-slate-900 flex items-center">
-                        {comment.authorName}
+                        {comment.user?.name || comment.authorName || 'Unknown User'}
                         {!comment.approved && (
                           <span className="ml-2 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-black uppercase rounded tracking-tighter">Pending</span>
                         )}
                       </h4>
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
                         <span className="flex items-center text-xs text-slate-400 font-bold">
-                          <Mail size={12} className="mr-1" /> {comment.authorEmail}
+                          <Mail size={12} className="mr-1" /> {comment.user?.email || comment.authorEmail || 'No Email'}
                         </span>
                         <span className="flex items-center text-xs text-slate-400 font-bold">
                           <Calendar size={12} className="mr-1" /> {new Date(comment.createdAt).toLocaleDateString()}

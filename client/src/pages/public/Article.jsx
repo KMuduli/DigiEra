@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import api from '../../api/api';
 import Spinner from '../../components/Spinner';
 import SEOHead from '../../components/SEOHead';
-import { Calendar, User, Tag, ChevronLeft, MessageCircle, Clock, Eye } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { Calendar, User, Tag, ChevronLeft, MessageCircle, Clock, Edit2, Trash2, X, Check } from 'lucide-react';
 
 const Article = () => {
   const { slug } = useParams();
@@ -13,14 +14,14 @@ const Article = () => {
 
   const { user } = useAuth();
   
-  // Comment form state
-  const [commentData, setCommentData] = useState({
-    authorName: user?.name || '',
-    authorEmail: user?.email || '',
-    content: ''
-  });
+  // Comment posting state
+  const [content, setContent] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
   const [commentSuccess, setCommentSuccess] = useState(false);
+
+  // Comment edit state
+  const [editingId, setEditingId] = useState(null);
+  const [editContent, setEditContent] = useState('');
 
   const fetchArticle = async () => {
     try {
@@ -38,32 +39,67 @@ const Article = () => {
     fetchArticle();
   }, [slug]);
 
-  const handleCommentChange = (e) => {
-    const { name, value } = e.target;
-    setCommentData(prev => ({ ...prev, [name]: value }));
-  };
-
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    if (!commentData.authorName || !commentData.authorEmail || !commentData.content) {
-      alert('Please fill in all fields');
-      return;
-    }
+    if (!content.trim()) return;
 
     try {
       setSubmittingComment(true);
-      await api.post('/comments', {
-        ...commentData,
+      const res = await api.post('/comments', {
+        content,
         articleId: article.id
       });
       setCommentSuccess(true);
-      setCommentData({ authorName: '', authorEmail: '', content: '' });
-      // Reload article to show the new comment (if auto-approved) or just show a message
+      setContent('');
+      
+      // Update local state to show new comment immediately
+      if (res.data.comment) {
+        setArticle(prev => ({
+          ...prev,
+          comments: [res.data.comment, ...prev.comments]
+        }));
+      }
+
       setTimeout(() => setCommentSuccess(false), 5000);
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to post comment');
     } finally {
       setSubmittingComment(false);
+    }
+  };
+
+  const handleStartEdit = (comment) => {
+    setEditingId(comment.id);
+    setEditContent(comment.content);
+  };
+
+  const handleUpdateSubmit = async (commentId) => {
+    try {
+      await api.put(`/comments/${commentId}`, { content: editContent });
+      setEditingId(null);
+      // Update local state
+      setArticle(prev => ({
+        ...prev,
+        comments: prev.comments.map(c => 
+          c.id === commentId ? { ...c, content: editContent } : c
+        )
+      }));
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to update comment');
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('Are you sure you want to delete this comment?')) return;
+    try {
+      await api.delete(`/comments/${commentId}`);
+      // Update local state
+      setArticle(prev => ({
+        ...prev,
+        comments: prev.comments.filter(c => c.id !== commentId)
+      }));
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to delete comment');
     }
   };
 
@@ -95,7 +131,6 @@ const Article = () => {
         image={article.featuredImage}
       />
 
-      {/* Header Section */}
       <header className="bg-white border-b border-slate-200 pt-12 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link 
@@ -116,8 +151,7 @@ const Article = () => {
             </div>
             <span>•</span>
             <div className="flex items-center">
-              <Eye size={16} className="mr-1.5" />
-              <span>{article.views} views</span>
+              <span>{article.author?.name || 'DigitalEra Team'}</span>
             </div>
           </div>
 
@@ -130,7 +164,7 @@ const Article = () => {
               <User size={24} />
             </div>
             <div>
-              <div className="font-bold text-slate-900">{article.author?.name || 'Admin'}</div>
+              <div className="font-bold text-slate-900">{article.author?.name || 'DigitalEra Team'}</div>
               <div className="text-sm text-slate-500 flex items-center">
                 <Calendar size={14} className="mr-1.5" /> {formattedDate}
               </div>
@@ -139,7 +173,6 @@ const Article = () => {
         </div>
       </header>
 
-      {/* Featured Image */}
       {article.featuredImage && (
         <div className="max-w-5xl mx-auto px-4 -mt-8 mb-16">
           <img 
@@ -150,14 +183,12 @@ const Article = () => {
         </div>
       )}
 
-      {/* Content Section */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div 
           className="prose prose-slate lg:prose-xl prose-headings:font-black prose-headings:tracking-tight prose-a:text-primary-600 prose-pre:p-0 prose-img:rounded-2xl max-w-none"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 
-        {/* Tags */}
         {article.tags && article.tags.length > 0 && (
           <div className="mt-16 pt-8 border-t border-slate-100 flex flex-wrap gap-2">
             {article.tags.map(tag => (
@@ -171,7 +202,7 @@ const Article = () => {
           </div>
         )}
 
-        {/* Comments Section (Simplified for this version) */}
+        {/* Extended Comment Section */}
         <section className="mt-20">
           <div className="flex items-center space-x-3 mb-10">
             <MessageCircle className="text-primary-600" size={28} />
@@ -182,12 +213,74 @@ const Article = () => {
             {article.comments && article.comments.length > 0 ? (
               <div className="space-y-8">
                 {article.comments.map(comment => (
-                  <div key={comment.id} className="pb-8 border-b border-slate-50 last:border-0 last:pb-0">
+                  <div key={comment.id} className="pb-8 border-b border-slate-50 last:border-0 last:pb-0 group">
                     <div className="flex items-center justify-between mb-4">
-                      <div className="font-bold text-slate-900">{comment.authorName}</div>
-                      <div className="text-xs text-slate-400">{new Date(comment.createdAt).toLocaleDateString()}</div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-sm">
+                          {(comment.user?.name || comment.authorName || 'U').charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-bold text-slate-900 flex items-center">
+                            {comment.user?.name || comment.authorName}
+                            {comment.user?.id === article.authorId && (
+                              <span className="ml-2 text-[10px] bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full uppercase tracking-widest">Author</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-400">{new Date(comment.createdAt).toLocaleDateString()}</div>
+                        </div>
+                      </div>
+                      
+                      {/* Edit/Delete Actions for Owner */}
+                      {user && (user.id === comment.userId || user.role === 'ADMIN') && (
+                        <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {user.id === comment.userId && (
+                            <button 
+                              onClick={() => handleStartEdit(comment)}
+                              className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                              title="Edit Comment"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                          )}
+                          <button 
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete Comment"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-slate-600 leading-relaxed italic">"{comment.content}"</p>
+                    
+                    {/* Inline Edit Form OR Comment Display */}
+                    {editingId === comment.id ? (
+                      <div className="mt-2">
+                        <textarea
+                          className="admin-input h-24 mb-3"
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                        />
+                        <div className="flex items-center space-x-3">
+                          <button 
+                            onClick={() => handleUpdateSubmit(comment.id)}
+                            className="btn btn-primary px-4 py-1.5 text-sm flex items-center"
+                          >
+                            <Check size={16} className="mr-1.5" /> Save
+                          </button>
+                          <button 
+                            onClick={() => setEditingId(null)}
+                            className="btn btn-secondary px-4 py-1.5 text-sm flex items-center"
+                          >
+                            <X size={16} className="mr-1.5" /> Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-slate-600 leading-relaxed">
+                        {comment.content}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -206,47 +299,29 @@ const Article = () => {
                   <p className="text-slate-900 font-black mb-2 tracking-tight">Login to make a comment</p>
                   <p className="text-slate-500 text-sm mb-6 max-w-xs mx-auto font-medium">Join our community of developers to share your thoughts and insights.</p>
                   <div className="flex justify-center space-x-3">
-                    <Link to="/admin/login" className="btn btn-primary px-6 text-sm font-black">Log In</Link>
-                    <Link to="/register" className="btn btn-secondary px-6 text-sm font-black">Register</Link>
+                    <Link to="/register" className="btn btn-primary px-6 text-sm font-black">Log In / Register</Link>
                   </div>
                 </div>
               ) : commentSuccess ? (
                 <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-xl text-sm font-bold">
-                  Thank you! Your comment has been submitted and is awaiting moderation.
+                  Thank you! Your comment has been posted successfully.
                 </div>
               ) : (
                 <form className="space-y-4" onSubmit={handleCommentSubmit}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input 
-                      type="text" 
-                      name="authorName"
-                      placeholder="Your Name" 
-                      className="admin-input bg-slate-50 border-slate-100 opacity-70" 
-                      value={commentData.authorName}
-                      disabled
-                    />
-                    <input 
-                      type="email" 
-                      name="authorEmail"
-                      placeholder="Your Email" 
-                      className="admin-input bg-slate-50 border-slate-100 opacity-70" 
-                      value={commentData.authorEmail}
-                      disabled
-                    />
-                  </div>
+                  {/* Notice that user details are now automatically handled by the backend */}
                   <textarea 
                     name="content"
                     rows="4" 
-                    placeholder="Write your comment here..." 
+                    placeholder="Join the discussion... Note: Be respectful and constructive." 
                     className="admin-input h-32 resize-none"
-                    value={commentData.content}
-                    onChange={handleCommentChange}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                     required
                   ></textarea>
                   <button 
                     type="submit" 
-                    disabled={submittingComment}
-                    className="btn btn-primary px-8 flex items-center font-black"
+                    disabled={submittingComment || !content.trim()}
+                    className="btn btn-primary px-8 flex items-center font-black disabled:opacity-50"
                   >
                     {submittingComment ? 'Posting...' : 'Post Comment'}
                   </button>

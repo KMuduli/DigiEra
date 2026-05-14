@@ -4,44 +4,59 @@ const router = express.Router();
 const {
   getCommentsByArticle,
   createComment,
+  updateComment,
+  deleteComment,
   getAllComments,
   updateCommentStatus,
-  deleteComment,
 } = require('../controllers/comment.controller');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, authorize } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const { commentSchema } = require('../utils/schemas');
 
 /**
- * @swagger
- * /api/comments/article/{articleId}:
- *   get:
- *     summary: Get approved comments for an article
- *     tags: [Comments]
- *     parameters:
- *       - in: path
- *         name: articleId
- *         required: true
- *         schema: { type: integer }
- *     responses:
- *       200: { description: Comments list }
+ * @route   GET /api/comments/article/:articleId
+ * @desc    Get approved comments for an article
+ * @access  Public
  */
 router.get('/article/:articleId', getCommentsByArticle);
 
 /**
- * @swagger
- * /api/comments:
- *   post:
- *     summary: Submit a new comment (public)
- *     tags: [Comments]
- *     responses:
- *       201: { description: Comment submitted for moderation }
+ * @route   POST /api/comments
+ * @desc    Submit a new comment
+ * @access  Private (Authenticated Users)
  */
-router.post('/', validate(commentSchema), createComment);
+router.post('/', authenticate, validate(commentSchema), createComment);
 
-// Admin routes
-router.get('/admin', authenticate, getAllComments);
-router.patch('/:id/status', authenticate, updateCommentStatus);
+/**
+ * @route   PUT /api/comments/:id
+ * @desc    Edit a comment
+ * @access  Private (Owner)
+ */
+router.put('/:id', authenticate, updateComment);
+
+/**
+ * @route   DELETE /api/comments/:id
+ * @desc    Delete a comment
+ * @access  Private (Owner or Admin)
+ */
 router.delete('/:id', authenticate, deleteComment);
+
+// ==========================================
+// ADMIN ROUTES
+// ==========================================
+
+/**
+ * @route   GET /api/comments/admin
+ * @desc    Get all comments for moderation
+ * @access  Private (Admin only)
+ */
+router.get('/admin', authenticate, authorize('ADMIN'), getAllComments);
+
+/**
+ * @route   PATCH /api/comments/:id/status
+ * @desc    Approve or reject a comment
+ * @access  Private (Admin only)
+ */
+router.patch('/:id/status', authenticate, authorize('ADMIN'), updateCommentStatus);
 
 module.exports = router;

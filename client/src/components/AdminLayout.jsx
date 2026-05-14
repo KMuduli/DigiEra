@@ -9,7 +9,8 @@ import {
   Home, 
   PlusCircle, 
   ExternalLink,
-  MessageSquare
+  MessageSquare,
+  FileCode2
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -18,12 +19,14 @@ const AdminLayout = () => {
 
   if (loading) return <Spinner fullPage />;
   if (!user) return <Navigate to="/admin/login" replace />;
+  if (user.role !== 'ADMIN') return <Navigate to="/" replace />;
 
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin/dashboard' },
     { name: 'Articles', icon: <FileText size={20} />, path: '/admin/articles' },
     { name: 'Categories', icon: <FolderTree size={20} />, path: '/admin/categories' },
     { name: 'Comments', icon: <MessageSquare size={20} />, path: '/admin/comments' },
+    { name: 'Static Pages', icon: <FileCode2 size={20} />, path: '/admin/pages' },
   ];
 
   return (

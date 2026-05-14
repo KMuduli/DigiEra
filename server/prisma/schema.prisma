@@ -1,4 +1,5 @@
-// Prisma Schema for DigitalEra Blog CMS
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -10,41 +11,16 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  name      String
-  role      Role      @default(READER)
-  avatar    String?
-  articles  Article[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@map("users")
-}
-
-model Article {
   id            Int       @id @default(autoincrement())
-  title         String
-  slug          String    @unique
-  excerpt       String?
-  content       String
-  featuredImage String?
-  status        Status    @default(DRAFT)
-  author        User      @relation(fields: [authorId], references: [id])
-  authorId      Int
-  category      Category  @relation(fields: [categoryId], references: [id])
-  categoryId    Int
-  tags          Tag[]
+  email         String    @unique
+  password      String
+  name          String
+  role          Role      @default(USER)
+  avatar        String?
+  articles      Article[]
   comments      Comment[]
-  metaTitle     String?
-  metaDesc      String?
-  views         Int       @default(0)
-  publishedAt   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
-  @@map("articles")
 }
 
 model Category {
@@ -54,9 +30,6 @@ model Category {
   description String?
   articles    Article[]
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@map("categories")
 }
 
 model Tag {
@@ -65,29 +38,66 @@ model Tag {
   slug      String    @unique
   articles  Article[]
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+}
 
-  @@map("tags")
+model Article {
+  id            Int       @id @default(autoincrement())
+  title         String
+  slug          String    @unique
+  content       String    @db.Text
+  excerpt       String?   @db.Text
+  featuredImage String?
+  status        Status    @default(DRAFT)
+  views         Int       @default(0)
+  
+  // SEO fields
+  metaTitle     String?
+  metaDesc      String?
+  
+  // Relationships
+  authorId      Int
+  author        User      @relation(fields: [authorId], references: [id])
+  categoryId    Int
+  category      Category  @relation(fields: [categoryId], references: [id])
+  tags          Tag[]
+  comments      Comment[]
+  
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  authorName String
-  authorEmail String
-  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  articleId Int
-  approved  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  content     String   @db.Text
+  approved    Boolean  @default(true)
+  
+  // Relationships
+  articleId   Int
+  article     Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Legacy fields for guest migration support
+  authorName  String?
+  authorEmail String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
-  @@map("comments")
+model Page {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum Role {
   ADMIN
-  EDITOR
-  READER
+  USER
 }
 
 enum Status {

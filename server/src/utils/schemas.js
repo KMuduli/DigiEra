@@ -42,8 +42,6 @@ const tagSchema = z.object({
 // ─── Comment Schemas ───
 const commentSchema = z.object({
   content: z.string().min(3, 'Comment must be at least 3 characters'),
-  authorName: z.string().min(2, 'Name is required'),
-  authorEmail: z.string().email('Valid email is required'),
   articleId: z.number().int().positive(),
 });
 
