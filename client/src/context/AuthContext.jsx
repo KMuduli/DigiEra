@@ -31,7 +31,8 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data.user);
       return res.data;
     } catch (err) {
-      const msg = err.response?.data?.error || 'Login failed';
+      const apiErr = err.response?.data?.error || err.response?.data?.message || err.message;
+      const msg = typeof apiErr === 'string' ? apiErr : (apiErr?.message || JSON.stringify(apiErr) || 'Login failed');
       setError(msg);
       throw new Error(msg);
     }
