@@ -50,8 +50,8 @@ const ArticleForm = () => {
           api.get('/categories'),
           api.get('/tags')
         ]);
-        setCategories(catRes.data.categories);
-        setAllTags(tagRes.data.tags);
+        setCategories(catRes.data?.categories || []);
+        setAllTags(tagRes.data?.tags || []);
 
         if (isEdit) {
           const res = await api.get(`/articles/admin/${id}`);
@@ -65,7 +65,7 @@ const ArticleForm = () => {
             metaTitle: art.metaTitle || '',
             metaDesc: art.metaDesc || '',
             featuredImage: art.featuredImage || '',
-            tags: art.tags.map(t => t.name)
+            tags: (art.tags || []).map(t => t.name)
           });
         }
       } catch (err) {
@@ -246,7 +246,7 @@ const ArticleForm = () => {
                   onChange={handleInputChange}
                 >
                   <option value="">Select a category</option>
-                  {categories.map(cat => (
+                  {(categories || []).map(cat => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>
@@ -256,7 +256,7 @@ const ArticleForm = () => {
                 <label className="block text-sm font-bold text-slate-700 mb-2 font-black">Featured Image</label>
                 {formData.featuredImage ? (
                   <div className="relative group rounded-xl overflow-hidden aspect-video border border-slate-200">
-                    <img src={`http://localhost:5000${formData.featuredImage}`} className="h-full w-full object-cover" />
+                    <img src={`${api.defaults.baseURL.replace('/api', '')}${formData.featuredImage}`} className="h-full w-full object-cover" />
                     <button 
                       onClick={() => setFormData(p => ({ ...p, featuredImage: '' }))}
                       className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
@@ -294,7 +294,7 @@ const ArticleForm = () => {
                 onKeyDown={handleAddTag}
               />
               <div className="flex flex-wrap gap-2">
-                {formData.tags.map(tag => (
+                {(formData.tags || []).map(tag => (
                   <span key={tag} className="inline-flex items-center px-2.5 py-1 bg-primary-50 text-primary-600 text-xs font-bold rounded-lg group">
                     {tag}
                     <button onClick={() => removeTag(tag)} className="ml-1.5 text-primary-400 hover:text-primary-600">

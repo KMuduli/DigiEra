@@ -11,20 +11,59 @@ const Article = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Comment form state
+  const [commentData, setCommentData] = useState({
+    authorName: '',
+    authorEmail: '',
+    content: ''
+  });
+  const [submittingComment, setSubmittingComment] = useState(false);
+  const [commentSuccess, setCommentSuccess] = useState(false);
+
+  const fetchArticle = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(`/articles/${slug}`);
+      setArticle(res.data.article);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to load article');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchArticle = async () => {
-      try {
-        setLoading(true);
-        const res = await api.get(`/articles/${slug}`);
-        setArticle(res.data.article);
-      } catch (err) {
-        setError(err.response?.data?.error || 'Failed to load article');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchArticle();
   }, [slug]);
+
+  const handleCommentChange = (e) => {
+    const { name, value } = e.target;
+    setCommentData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!commentData.authorName || !commentData.authorEmail || !commentData.content) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    try {
+      setSubmittingComment(true);
+      await api.post('/comments', {
+        ...commentData,
+        articleId: article.id
+      });
+      setCommentSuccess(true);
+      setCommentData({ authorName: '', authorEmail: '', content: '' });
+      // Reload article to show the new comment (if auto-approved) or just show a message
+      setTimeout(() => setCommentSuccess(false), 5000);
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to post comment');
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
 
   if (loading) return <Spinner />;
   if (error || !article) {
@@ -158,14 +197,51 @@ const Article = () => {
             
             <div className="mt-12 pt-10 border-t border-slate-100">
               <h3 className="text-xl font-bold text-slate-900 mb-6 tracking-tight">Add your thoughts</h3>
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input type="text" placeholder="Your Name" className="admin-input" />
-                  <input type="email" placeholder="Your Email" className="admin-input" />
+              
+              {commentSuccess ? (
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-xl text-sm font-bold">
+                  Thank you! Your comment has been submitted and is awaiting moderation.
                 </div>
-                <textarea rows="4" placeholder="Write your comment here..." className="admin-input h-32 resize-none"></textarea>
-                <button type="button" className="btn btn-primary px-8">Post Comment</button>
-              </form>
+              ) : (
+                <form className="space-y-4" onSubmit={handleCommentSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input 
+                      type="text" 
+                      name="authorName"
+                      placeholder="Your Name" 
+                      className="admin-input" 
+                      value={commentData.authorName}
+                      onChange={handleCommentChange}
+                      required
+                    />
+                    <input 
+                      type="email" 
+                      name="authorEmail"
+                      placeholder="Your Email" 
+                      className="admin-input" 
+                      value={commentData.authorEmail}
+                      onChange={handleCommentChange}
+                      required
+                    />
+                  </div>
+                  <textarea 
+                    name="content"
+                    rows="4" 
+                    placeholder="Write your comment here..." 
+                    className="admin-input h-32 resize-none"
+                    value={commentData.content}
+                    onChange={handleCommentChange}
+                    required
+                  ></textarea>
+                  <button 
+                    type="submit" 
+                    disabled={submittingComment}
+                    className="btn btn-primary px-8 flex items-center"
+                  >
+                    {submittingComment ? 'Posting...' : 'Post Comment'}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </section>

@@ -18,6 +18,7 @@ import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import ArticleList from './pages/admin/ArticleList';
 import ArticleForm from './pages/admin/ArticleForm';
+import CategoryManager from './pages/admin/CategoryManager';
 
 // Scroll to top helper
 import { useEffect } from 'react';
@@ -63,7 +64,7 @@ function App() {
               <Route path="articles/new" element={<ArticleForm />} />
               <Route path="articles/edit/:id" element={<ArticleForm />} />
               {/* Optional: Add Category/Tag/Comment management here */}
-              <Route path="categories" element={<div className="p-10 card bg-white"><h2 className="text-2xl font-black">Category Management</h2><p className="mt-4 text-slate-500">Feature coming soon in version 1.1...</p></div>} />
+              <Route path="categories" element={<CategoryManager />} />
               <Route path="comments" element={<div className="p-10 card bg-white"><h2 className="text-2xl font-black">Comment Moderation</h2><p className="mt-4 text-slate-500">Feature coming soon in version 1.1...</p></div>} />
             </Route>
 
