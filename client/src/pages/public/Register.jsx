@@ -24,7 +24,9 @@ const Register = () => {
       setSuccess(true);
       setTimeout(() => navigate('/admin/login'), 2000);
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed');
+      const apiErr = err.response?.data?.error || err.response?.data?.message || err.message;
+      const errorString = typeof apiErr === 'string' ? apiErr : (apiErr?.message || JSON.stringify(apiErr) || 'Registration failed');
+      setError(errorString);
     } finally {
       setLoading(false);
     }
