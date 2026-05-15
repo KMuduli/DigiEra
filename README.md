@@ -1,6 +1,6 @@
 # DigitalEra — Full-Stack Blogging CMS
 
-DigitalEra is a modern, responsive, and SEO-friendly blogging platform built with React, Node.js, and PostgreSQL. It features a high-performance public website and a secure, enterprise-grade admin panel.
+DigitalEra is a modern, responsive, and SEO-friendly blogging platform built with React, Node.js, and PostgreSQL. It features a high-performance public website and a secure, enterprise-grade admin panel. Kalia
 
 ## 🚀 Quick Start
 

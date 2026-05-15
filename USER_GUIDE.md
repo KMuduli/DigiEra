@@ -6,7 +6,7 @@ Welcome to your professional Technology & Programming Blogging CMS! This guide e
 
 ## 1. Getting Started
 
-### 🔐 Accessing the Admin Panel
+### 🔐 Accessing the Admin Panel fgfgggg
 1.  Navigate to your website URL.
 2.  Click **Admin** in the top navigation bar or go directly to `/admin/login`.
 3.  **Credentials**:
