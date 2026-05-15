@@ -5,8 +5,14 @@ const fs = require('fs');
 
 // Ensure uploads directory exists
 const uploadDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+
+// Fixed: Wrapped in a try/catch block to prevent Vercel serverless crashes
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (error) {
+  console.warn("Read-only serverless environment detected. Local uploads directory bypassed:", error.message);
 }
 
 const storage = multer.diskStorage({
