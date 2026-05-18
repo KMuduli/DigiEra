@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/api';
 import Spinner from '../../components/Spinner';
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  Eye, 
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Eye,
   ExternalLink,
   ChevronLeft,
   ChevronRight,
@@ -108,7 +108,11 @@ const ArticleList = () => {
                       <div className="flex items-center space-x-4">
                         <div className="h-12 w-12 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0">
                           {article.featuredImage ? (
-                            <img src={`http://localhost:5000${article.featuredImage}`} className="h-full w-full object-cover" />
+                            <img
+                              src={article.featuredImage}
+                              alt={article.title}
+                              className="h-full w-full object-cover"
+                            />
                           ) : (
                             <div className="h-full w-full flex items-center justify-center text-slate-300 bg-slate-50"><FileText size={20} /></div>
                           )}
@@ -125,11 +129,10 @@ const ArticleList = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`text-[10px] uppercase font-black px-2 py-1 rounded tracking-widest ${
-                        article.status === 'PUBLISHED' 
-                        ? 'bg-emerald-100 text-emerald-700' 
-                        : 'bg-slate-100 text-slate-500'
-                      }`}>
+                      <span className={`text-[10px] uppercase font-black px-2 py-1 rounded tracking-widest ${article.status === 'PUBLISHED'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-slate-100 text-slate-500'
+                        }`}>
                         {article.status}
                       </span>
                     </td>
@@ -140,22 +143,22 @@ const ArticleList = () => {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end space-x-2">
-                        <Link 
-                          to={`/article/${article.slug}`} 
+                        <Link
+                          to={`/article/${article.slug}`}
                           target="_blank"
                           className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
                           title="View Live"
                         >
                           <ExternalLink size={18} />
                         </Link>
-                        <Link 
+                        <Link
                           to={`/admin/articles/edit/${article.id}`}
                           className="p-2 text-slate-400 hover:text-primary-600 transition-colors"
                           title="Edit"
                         >
                           <Edit size={18} />
                         </Link>
-                        <button 
+                        <button
                           onClick={() => handleDelete(article.id)}
                           className="p-2 text-slate-400 hover:text-red-600 transition-colors"
                           title="Delete"
@@ -177,14 +180,14 @@ const ArticleList = () => {
             Showing Page {pagination.page} of {pagination.totalPages}
           </p>
           <div className="flex space-x-2">
-            <button 
+            <button
               disabled={pagination.page <= 1}
               onClick={() => fetchArticles(pagination.page - 1)}
               className="p-2 border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronLeft size={18} />
             </button>
-            <button 
+            <button
               disabled={pagination.page >= pagination.totalPages}
               onClick={() => fetchArticles(pagination.page + 1)}
               className="p-2 border border-slate-200 rounded hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed"
