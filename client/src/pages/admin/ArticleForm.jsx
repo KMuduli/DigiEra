@@ -1,47 +1,377 @@
-const handleImageUpload = async (e) => {
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import api from '../../api/api';
+import Spinner from '../../components/Spinner';
+import { supabase } from '../../lib/supabase';
 
-  const file = e.target.files[0];
+import {
+  ChevronLeft,
+  Save,
+  Send,
+  Image as ImageIcon,
+  X,
+  Search,
+  Loader2,
+  Settings,
+  AlignLeft,
+  Tag as TagIcon
+} from 'lucide-react';
 
-  if (!file) return;
+const ArticleForm = () => {
+  const { id } = useParams();
+  const isEdit = !!id;
+  const navigate = useNavigate();
 
-  try {
+  const [loading, setLoading] = useState(isEdit);
+  const [submitting, setSubmitting] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [allTags, setAllTags] = useState([]);
 
-    setSubmitting(true);
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    excerpt: '',
+    categoryId: '',
+    status: 'DRAFT',
+    metaTitle: '',
+    metaDesc: '',
+    featuredImage: '',
+    tags: []
+  });
 
-    // Generate unique file name
-    const fileExt = file.name.split('.').pop();
+  const [tagInput, setTagInput] = useState('');
 
-    const fileName = `${Date.now()}.${fileExt}`;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [catRes, tagRes] = await Promise.all([
+          api.get('/categories'),
+          api.get('/tags')
+        ]);
 
-    // Upload image to Supabase
-    const { error } = await supabase.storage
-      .from('blog-images')
-      .upload(fileName, file);
+        setCategories(catRes.data?.categories || []);
+        setAllTags(tagRes.data?.tags || []);
 
-    if (error) {
-      throw error;
-    }
+        if (isEdit) {
+          const res = await api.get(`/articles/admin/${id}`);
+          const art = res.data.article;
 
-    // Get public image URL
-    const { data } = supabase.storage
-      .from('blog-images')
-      .getPublicUrl(fileName);
+          setFormData({
+            title: art.title,
+            content: art.content,
+            excerpt: art.excerpt || '',
+            categoryId: art.categoryId,
+            status: art.status,
+            metaTitle: art.metaTitle || '',
+            metaDesc: art.metaDesc || '',
+            featuredImage: art.featuredImage || '',
+            tags: (art.tags || []).map(t => t.name)
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch article data', err);
+        alert('Error loading data');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Save image URL into form state
+    fetchData();
+  }, [id, isEdit]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData(prev => ({
       ...prev,
-      featuredImage: data.publicUrl
+      [name]: value
     }));
+  };
 
-  } catch (err) {
+  const handleQuillChange = (content) => {
+    setFormData(prev => ({
+      ...prev,
+      content
+    }));
+  };
 
-    console.error('Upload Error:', err);
+  // SUPABASE IMAGE UPLOAD
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
 
-    alert('Image upload failed');
+    if (!file) return;
 
-  } finally {
+    try {
+      setSubmitting(true);
 
-    setSubmitting(false);
+      const fileExt = file.name.split('.').pop();
 
-  }
+      const fileName = `${Date.now()}.${fileExt}`;
+
+      const { error } = await supabase.storage
+        .from('blog-images')
+        .upload(fileName, file);
+
+      if (error) {
+        throw error;
+      }
+
+      const { data } = supabase.storage
+        .from('blog-images')
+        .getPublicUrl(fileName);
+
+      setFormData(prev => ({
+        ...prev,
+        featuredImage: data.publicUrl
+      }));
+
+    } catch (err) {
+      console.error('Upload Error:', err);
+      alert('Image upload failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleAddTag = (e) => {
+    if (e.key === 'Enter' && tagInput.trim()) {
+      e.preventDefault();
+
+      if (!formData.tags.includes(tagInput.trim())) {
+        setFormData(prev => ({
+          ...prev,
+          tags: [...prev.tags, tagInput.trim()]
+        }));
+      }
+
+      setTagInput('');
+    }
+  };
+
+  const removeTag = (tagToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(t => t !== tagToRemove)
+    }));
+  };
+
+  const handleSubmit = async (publish = false) => {
+    if (!formData.title || !formData.content || !formData.categoryId) {
+      alert('Please fill in title, content and category.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      const payload = {
+        ...formData,
+        categoryId: parseInt(formData.categoryId, 10),
+        status: publish ? 'PUBLISHED' : formData.status
+      };
+
+      if (isEdit) {
+        await api.put(`/articles/${id}`, payload);
+      } else {
+        await api.post('/articles', payload);
+      }
+
+      navigate('/admin/articles');
+
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to save article');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) return <Spinner />;
+
+  return (
+    <div className="space-y-8 max-w-6xl mx-auto">
+
+      <div className="flex justify-between items-center">
+        <Link
+          to="/admin/articles"
+          className="inline-flex items-center text-sm font-bold text-slate-400 hover:text-primary-600"
+        >
+          <ChevronLeft size={18} className="mr-1" />
+          Back to list
+        </Link>
+
+        <div className="flex space-x-3">
+
+          <button
+            onClick={() => handleSubmit(false)}
+            disabled={submitting}
+            className="btn btn-secondary flex items-center"
+          >
+            {submitting
+              ? <Loader2 size={18} className="mr-2 animate-spin" />
+              : <Save size={18} className="mr-2" />
+            }
+
+            Save as Draft
+          </button>
+
+          <button
+            onClick={() => handleSubmit(true)}
+            disabled={submitting}
+            className="btn btn-primary flex items-center"
+          >
+            {submitting
+              ? <Loader2 size={18} className="mr-2 animate-spin" />
+              : <Send size={18} className="mr-2" />
+            }
+
+            {isEdit && formData.status === 'PUBLISHED'
+              ? 'Update Post'
+              : 'Publish Article'}
+          </button>
+
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        {/* MAIN CONTENT */}
+        <div className="lg:col-span-2 space-y-6">
+
+          <input
+            type="text"
+            name="title"
+            placeholder="Enter article title..."
+            className="text-4xl font-black w-full border-none outline-none"
+            value={formData.title}
+            onChange={handleInputChange}
+          />
+
+          <div className="bg-slate-900 rounded-xl overflow-hidden min-h-[500px]">
+
+            <div className="bg-slate-800 text-slate-400 text-xs px-4 py-2">
+              HTML Source Code
+            </div>
+
+            <textarea
+              className="w-full min-h-[500px] p-6 bg-transparent text-emerald-400 font-mono outline-none"
+              placeholder="Write your article in HTML here..."
+              value={formData.content}
+              onChange={(e) => handleQuillChange(e.target.value)}
+            />
+
+          </div>
+
+          <div className="card p-6">
+
+            <div className="flex items-center space-x-2 mb-4">
+              <AlignLeft size={20} />
+              <h3 className="font-bold">Excerpt</h3>
+            </div>
+
+            <textarea
+              name="excerpt"
+              rows="4"
+              className="admin-input h-32 resize-none"
+              placeholder="A short summary..."
+              value={formData.excerpt}
+              onChange={handleInputChange}
+            />
+
+          </div>
+
+        </div>
+
+        {/* SIDEBAR */}
+        <div className="space-y-6">
+
+          <div className="card p-6">
+
+            <div className="flex items-center space-x-2 mb-4">
+              <Settings size={20} />
+              <h3 className="font-bold">Post Settings</h3>
+            </div>
+
+            <div className="space-y-4">
+
+              <select
+                name="categoryId"
+                className="admin-input"
+                value={formData.categoryId}
+                onChange={handleInputChange}
+              >
+                <option value="">Select Category</option>
+
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* FEATURED IMAGE */}
+              <div>
+
+                <label className="block text-sm font-bold mb-2">
+                  Featured Image
+                </label>
+
+                {formData.featuredImage ? (
+
+                  <div className="relative rounded-xl overflow-hidden aspect-video border">
+
+                    <img
+                      src={formData.featuredImage}
+                      alt="Featured"
+                      className="h-full w-full object-cover"
+                    />
+
+                    <button
+                      onClick={() =>
+                        setFormData(prev => ({
+                          ...prev,
+                          featuredImage: ''
+                        }))
+                      }
+                      className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full"
+                    >
+                      <X size={16} />
+                    </button>
+
+                  </div>
+
+                ) : (
+
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer">
+
+                    <ImageIcon size={32} className="mb-2 text-slate-400" />
+
+                    <p className="text-xs font-bold uppercase">
+                      Upload Image
+                    </p>
+
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                    />
+
+                  </label>
+
+                )}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
 };
+
+export default ArticleForm;
