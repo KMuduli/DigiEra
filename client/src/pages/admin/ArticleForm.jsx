@@ -29,12 +29,15 @@ const ArticleForm = () => {
 
   const [formData, setFormData] = useState({
     title: '',
+    slug: '',
     content: '',
     excerpt: '',
     categoryId: '',
     status: 'DRAFT',
     metaTitle: '',
     metaDesc: '',
+    targetKeywords: '',
+    readingTime: '',
     featuredImage: '',
     tags: []
   });
@@ -58,12 +61,15 @@ const ArticleForm = () => {
 
           setFormData({
             title: art.title,
+            slug: art.slug,
             content: art.content,
             excerpt: art.excerpt || '',
             categoryId: art.categoryId,
             status: art.status,
             metaTitle: art.metaTitle || '',
             metaDesc: art.metaDesc || '',
+            targetKeywords: art.targetKeywords || '',
+            readingTime: art.readingTime || '',
             featuredImage: art.featuredImage || '',
             tags: (art.tags || []).map(t => t.name)
           });
@@ -366,6 +372,100 @@ const ArticleForm = () => {
 
             </div>
 
+          </div>
+
+          {/* SEO SETTINGS */}
+          <div className="card p-6">
+            <div className="flex items-center space-x-2 mb-6">
+              <Search size={20} className="text-primary-600" />
+              <h3 className="font-bold text-lg">SEO & Discovery</h3>
+            </div>
+
+            <div className="space-y-5">
+              <div>
+                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">URL Slug</label>
+                <input
+                  type="text"
+                  name="slug"
+                  className="admin-input"
+                  placeholder="article-url-slug"
+                  value={formData.slug}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Meta Title</label>
+                <input
+                  type="text"
+                  name="metaTitle"
+                  className="admin-input"
+                  placeholder="SEO Title"
+                  value={formData.metaTitle}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Meta Description</label>
+                <textarea
+                  name="metaDesc"
+                  className="admin-input h-24 resize-none"
+                  placeholder="Brief description for search results..."
+                  value={formData.metaDesc}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Target Keywords</label>
+                <input
+                  type="text"
+                  name="targetKeywords"
+                  className="admin-input"
+                  placeholder="react, tips, tutorial"
+                  value={formData.targetKeywords}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Reading Time</label>
+                <input
+                  type="text"
+                  name="readingTime"
+                  className="admin-input"
+                  placeholder="e.g. 5 min"
+                  value={formData.readingTime}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">Tags</label>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {formData.tags.map(tag => (
+                    <span key={tag} className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-primary-100 text-primary-700 uppercase tracking-tighter">
+                      {tag}
+                      <button onClick={() => removeTag(tag)} className="ml-1.5 hover:text-primary-900">
+                        <X size={12} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="relative">
+                  <TagIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <input
+                    type="text"
+                    placeholder="Add tag and press Enter"
+                    className="admin-input pl-10"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleAddTag}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>

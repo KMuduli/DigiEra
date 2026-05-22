@@ -130,6 +130,7 @@ const Article = () => {
         description={article.metaDesc || article.excerpt} 
         slug={article.slug}
         image={article.featuredImage}
+        keywords={article.targetKeywords}
       />
 
       <header className="bg-white border-b border-slate-200 pt-12 pb-16">
@@ -148,7 +149,7 @@ const Article = () => {
             <span>•</span>
             <div className="flex items-center">
               <Clock size={16} className="mr-1.5" />
-              <span>5 min read</span>
+              <span>{article.readingTime || '5 min read'}</span>
             </div>
             <span>•</span>
             <div className="flex items-center">

@@ -50,9 +50,11 @@ model Article {
   status        Status    @default(DRAFT)
   views         Int       @default(0)
   
-  // SEO fields
+  // SEO & Metadata fields
   metaTitle     String?
   metaDesc      String?
+  targetKeywords String?
+  readingTime   String?
   
   // Relationships
   authorId      Int

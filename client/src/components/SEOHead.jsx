@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { getImageUrl } from '../utils/image';
 
-const SEOHead = ({ title, description, slug, image, type = 'article' }) => {
+const SEOHead = ({ title, description, slug, image, keywords, type = 'article' }) => {
   const siteTitle = 'DigitalEra';
   const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
   const siteUrl = window.location.origin;
@@ -12,6 +12,7 @@ const SEOHead = ({ title, description, slug, image, type = 'article' }) => {
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={description || 'DigitalEra - Modern Technology & Programming Blog'} />
+      {keywords && <meta name="keywords" content={keywords} />}
       
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />

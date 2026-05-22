@@ -165,7 +165,19 @@ const getArticleById = async (req, res, next) => {
  */
 const createArticle = async (req, res, next) => {
   try {
-    const { title, content, excerpt, categoryId, status, metaTitle, metaDesc, tags, featuredImage } = req.body;
+    const { 
+      title, 
+      content, 
+      excerpt, 
+      categoryId, 
+      status, 
+      metaTitle, 
+      metaDesc, 
+      tags, 
+      featuredImage,
+      targetKeywords,
+      readingTime 
+    } = req.body;
 
     let slug = generateSlug(title);
 
@@ -195,6 +207,8 @@ const createArticle = async (req, res, next) => {
         metaTitle: metaTitle || title,
         metaDesc: metaDesc || (excerpt || content.replace(/<[^>]*>/g, '').substring(0, 160)),
         featuredImage,
+        targetKeywords,
+        readingTime,
         publishedAt: status === 'PUBLISHED' ? new Date() : null,
         tags: { connectOrCreate: tagConnect },
       },
@@ -218,7 +232,19 @@ const createArticle = async (req, res, next) => {
 const updateArticle = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { title, content, excerpt, categoryId, status, metaTitle, metaDesc, tags, featuredImage } = req.body;
+    const { 
+      title, 
+      content, 
+      excerpt, 
+      categoryId, 
+      status, 
+      metaTitle, 
+      metaDesc, 
+      tags, 
+      featuredImage,
+      targetKeywords,
+      readingTime 
+    } = req.body;
 
     const existing = await prisma.article.findUnique({ where: { id } });
     if (!existing) {
@@ -241,6 +267,8 @@ const updateArticle = async (req, res, next) => {
     if (metaTitle !== undefined) data.metaTitle = metaTitle;
     if (metaDesc !== undefined) data.metaDesc = metaDesc;
     if (featuredImage !== undefined) data.featuredImage = featuredImage;
+    if (targetKeywords !== undefined) data.targetKeywords = targetKeywords;
+    if (readingTime !== undefined) data.readingTime = readingTime;
     if (status) {
       data.status = status;
       if (status === 'PUBLISHED' && !existing.publishedAt) {
