@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import api from '../../api/api';
 import Spinner from '../../components/Spinner';
 import SEOHead from '../../components/SEOHead';
+import { getImageUrl } from '../../utils/image';
 import { useAuth } from '../../context/AuthContext';
 import { Calendar, User, Tag, ChevronLeft, MessageCircle, Clock, Edit2, Trash2, X, Check } from 'lucide-react';
 
@@ -176,7 +177,7 @@ const Article = () => {
       {article.featuredImage && (
         <div className="max-w-5xl mx-auto px-4 -mt-8 mb-16">
           <img 
-            src={`http://localhost:5000${article.featuredImage}`} 
+            src={getImageUrl(article.featuredImage)} 
             alt={article.title} 
             className="w-full h-auto aspect-video object-cover rounded-2xl shadow-2xl border-4 border-white"
           />

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/api';
 import Spinner from '../../components/Spinner';
+import { getImageUrl } from '../../utils/image';
 import { 
   FileText, 
   Eye, 
@@ -87,7 +88,7 @@ const Dashboard = () => {
                 <div className="flex items-center space-x-4">
                   <div className="h-12 w-12 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden">
                     {article.featuredImage ? (
-                      <img src={`http://localhost:5000${article.featuredImage}`} className="h-full w-full object-cover" />
+                      <img src={getImageUrl(article.featuredImage)} className="h-full w-full object-cover" />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-slate-400"><FileText size={20} /></div>
                     )}

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Calendar, User, ChevronRight } from 'lucide-react';
+import { getImageUrl } from '../utils/image';
 
 const ArticleCard = ({ article }) => {
   const { title, slug, excerpt, featuredImage, createdAt, author, category } = article;
@@ -14,7 +15,7 @@ const ArticleCard = ({ article }) => {
     <article className="card group hover:shadow-md transition-shadow">
       <Link to={`/article/${slug}`} className="block relative aspect-video overflow-hidden">
         <img 
-          src={featuredImage ? `http://localhost:5000${featuredImage}` : `https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800`} 
+          src={featuredImage ? getImageUrl(featuredImage) : `https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800`} 
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />

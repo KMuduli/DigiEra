@@ -22,6 +22,9 @@ const pageRoutes = require('./routes/page.routes');
 
 const app = express();
 
+// Required for Vercel/proxies to correctly handle IP-based rate limiting
+app.set('trust proxy', 1);
+
 // ─── Security Middleware ───
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -58,7 +61,12 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customSiteTitle: 'DigitalEra API Docs',
 }));
 
-// ─── API Routes ───
+// ─── Health check ───
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', environment: process.env.NODE_ENV });
+});
+
+// ─── Regular Routes ───
 app.use('/api/auth', authRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/categories', categoryRoutes);
@@ -66,11 +74,6 @@ app.use('/api/tags', tagRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/pages', pageRoutes);
-
-// ─── Health Check ───
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
 
 // ─── Error Handling ───
 app.use(notFound);

@@ -1,10 +1,12 @@
 import { Helmet } from 'react-helmet-async';
+import { getImageUrl } from '../utils/image';
 
 const SEOHead = ({ title, description, slug, image, type = 'article' }) => {
   const siteTitle = 'DigitalEra';
   const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
-  const url = slug ? `http://localhost:5173/article/${slug}` : 'http://localhost:5173';
-  const finalImage = image ? `http://localhost:5000${image}` : 'http://localhost:5173/og-image.png';
+  const siteUrl = window.location.origin;
+  const url = slug ? `${siteUrl}/article/${slug}` : siteUrl;
+  const finalImage = image ? getImageUrl(image) : `${siteUrl}/og-image.png`;
 
   return (
     <Helmet>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/api';
 import Spinner from '../../components/Spinner';
+import { getImageUrl } from '../../utils/image';
 import {
   Plus,
   Search,
@@ -109,7 +110,7 @@ const ArticleList = () => {
                         <div className="h-12 w-12 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0">
                           {article.featuredImage ? (
                             <img
-                              src={article.featuredImage}
+                              src={getImageUrl(article.featuredImage)}
                               alt={article.title}
                               className="h-full w-full object-cover"
                             />
