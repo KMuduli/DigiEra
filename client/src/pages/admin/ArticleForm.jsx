@@ -103,9 +103,7 @@ const ArticleForm = () => {
 
     try {
       setSubmitting(true);
-
       const fileExt = file.name.split('.').pop();
-
       const fileName = `${Date.now()}.${fileExt}`;
 
       const { error } = await supabase.storage
@@ -113,6 +111,10 @@ const ArticleForm = () => {
         .upload(fileName, file);
 
       if (error) {
+        // Detailed error for the user to troubleshoot
+        if (error.message === 'bucket_not_found' || error.error === 'Bucket not found') {
+          throw new Error('Supabase bucket "blog-images" not found. Please create it in your Supabase dashboard.');
+        }
         throw error;
       }
 
@@ -127,7 +129,7 @@ const ArticleForm = () => {
 
     } catch (err) {
       console.error('Upload Error:', err);
-      alert('Image upload failed');
+      alert(`Image upload failed: ${err.message || 'Unknown error'}`);
     } finally {
       setSubmitting(false);
     }
