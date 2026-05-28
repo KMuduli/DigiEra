@@ -98,6 +98,25 @@ model Page {
   updatedAt   DateTime @updatedAt
 }
 
+model VisitorLog {
+  id          Int      @id @default(autoincrement())
+  ip          String?
+  userAgent   String?
+  path        String?
+  method      String?
+  
+  // User info if logged in
+  userId      Int?
+  name        String?
+  email       String?
+  
+  // Geolocation
+  city        String?
+  country     String?
+  
+  createdAt   DateTime @default(now())
+}
+
 enum Role {
   ADMIN
   USER

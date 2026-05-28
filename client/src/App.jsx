@@ -25,6 +25,7 @@ import ArticleForm from './pages/admin/ArticleForm';
 import CategoryManager from './pages/admin/CategoryManager';
 import CommentModerator from './pages/admin/CommentModerator';
 import PageManager from './pages/admin/PageManager';
+import VisitorList from './pages/admin/VisitorList';
 
 // Scroll to top helper
 import { useEffect } from 'react';
@@ -77,6 +78,7 @@ function App() {
               <Route path="categories" element={<CategoryManager />} />
               <Route path="comments" element={<CommentModerator />} />
               <Route path="pages" element={<PageManager />} />
+              <Route path="visitors" element={<VisitorList />} />
             </Route>
 
             {/* Fallback */}

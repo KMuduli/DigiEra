@@ -104,7 +104,7 @@ router.get('/admin/:id', authenticate, authorize('ADMIN'), getArticleById);
  *     responses:
  *       201: { description: Article created }
  */
-router.post('/', authenticate, authorize('ADMIN'), validate(createArticleSchema), createArticle);
+router.post('/', authenticate, authorize('ADMIN', 'USER'), validate(createArticleSchema), createArticle);
 
 /**
  * @swagger
@@ -121,7 +121,7 @@ router.post('/', authenticate, authorize('ADMIN'), validate(createArticleSchema)
  *     responses:
  *       200: { description: Article updated }
  */
-router.put('/:id', authenticate, authorize('ADMIN'), validate(updateArticleSchema), updateArticle);
+router.put('/:id', authenticate, authorize('ADMIN', 'USER'), validate(updateArticleSchema), updateArticle);
 
 /**
  * @swagger

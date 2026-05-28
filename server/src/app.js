@@ -10,6 +10,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const config = require('./config/env');
 const { errorHandler, notFound } = require('./middleware/error');
+const visitorLogger = require('./middleware/visitorLogger');
 
 // Route imports
 const authRoutes = require('./routes/auth.routes');
@@ -19,6 +20,7 @@ const tagRoutes = require('./routes/tag.routes');
 const uploadRoutes = require('./routes/upload.routes');
 const commentRoutes = require('./routes/comment.routes');
 const pageRoutes = require('./routes/page.routes');
+const visitorRoutes = require('./routes/visitor.routes');
 
 const app = express();
 
@@ -66,6 +68,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', environment: process.env.NODE_ENV });
 });
 
+// ─── Global Visitor Tracking ───
+app.use(visitorLogger);
+
 // ─── Regular Routes ───
 app.use('/api/auth', authRoutes);
 app.use('/api/articles', articleRoutes);
@@ -74,6 +79,7 @@ app.use('/api/tags', tagRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/pages', pageRoutes);
+app.use('/api/visitors', visitorRoutes);
 
 // ─── Error Handling ───
 app.use(notFound);

@@ -10,7 +10,8 @@ import {
   PlusCircle, 
   ExternalLink,
   MessageSquare,
-  FileCode2
+  FileCode2,
+  Users
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -27,6 +28,7 @@ const AdminLayout = () => {
     { name: 'Categories', icon: <FolderTree size={20} />, path: '/admin/categories' },
     { name: 'Comments', icon: <MessageSquare size={20} />, path: '/admin/comments' },
     { name: 'Static Pages', icon: <FileCode2 size={20} />, path: '/admin/pages' },
+    { name: 'Visitors', icon: <Users size={20} />, path: '/admin/visitors' },
   ];
 
   return (
