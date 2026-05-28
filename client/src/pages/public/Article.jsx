@@ -5,7 +5,7 @@ import Spinner from '../../components/Spinner';
 import SEOHead from '../../components/SEOHead';
 import { getImageUrl } from '../../utils/image';
 import { useAuth } from '../../context/AuthContext';
-import { Calendar, User, Tag, ChevronLeft, MessageCircle, Clock, Edit2, Trash2, X, Check } from 'lucide-react';
+import { Calendar, User, Tag, ChevronLeft, MessageCircle, Clock, Edit2, Trash2, X, Check, FileText } from 'lucide-react';
 
 const Article = () => {
   const { slug } = useParams();
