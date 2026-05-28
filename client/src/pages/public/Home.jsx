@@ -42,15 +42,15 @@ const Home = () => {
       <SEOHead title="Home" description="DigitalEra - Next-generation tech insights and programming tutorials." />
       
       {/* ─── Hero Section ─── */}
-      <section className="relative pt-8 pb-16 overflow-hidden">
+      <section className="relative pt-4 pb-16 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary-50 text-primary-600 text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-primary-100">
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary-50 text-primary-600 text-[10px] font-black uppercase tracking-[0.2em] mb-4 border border-primary-100">
                 <Zap size={14} className="mr-2 fill-primary-600" />
                 Evolution of Tech
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-slate-900 mb-8 leading-[0.9] tracking-tighter">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-slate-900 mb-4 leading-[0.9] tracking-tighter">
                 Mastering the <br/>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-400">Digital Era</span>
               </h1>
