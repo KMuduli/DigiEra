@@ -151,9 +151,6 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-5">
-                <Link to="/admin/login" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-                  Login
-                </Link>
                 <Link to="/register" className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-indigo-600/20">
                   Sign Up
                 </Link>
@@ -248,9 +245,6 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex flex-col space-y-3">
-                <Link to="/admin/login" className="text-center text-sm font-semibold text-slate-300 hover:text-white py-2 bg-slate-800 rounded-lg">
-                  Login
-                </Link>
                 <Link to="/register" className="bg-indigo-600 hover:bg-indigo-500 text-white text-center text-sm font-semibold py-2 rounded-lg shadow-lg shadow-indigo-600/20">
                   Sign Up
                 </Link>
