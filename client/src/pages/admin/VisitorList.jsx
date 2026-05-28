@@ -17,12 +17,22 @@ const VisitorList = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
+  
+  // Filtering state
+  const [dateRange, setDateRange] = useState({ 
+    startDate: '', 
+    endDate: '' 
+  });
 
   const fetchVisitors = async (page = 1) => {
     try {
       setLoading(true);
+      let url = `/visitors?page=${page}`;
+      if (dateRange.startDate) url += `&startDate=${dateRange.startDate}`;
+      if (dateRange.endDate) url += `&endDate=${dateRange.endDate}`;
+
       const [listRes, statsRes] = await Promise.all([
-        api.get(`/visitors?page=${page}`),
+        api.get(url),
         api.get('/visitors/stats')
       ]);
       setVisitors(listRes.data.visitors);
@@ -33,6 +43,33 @@ const VisitorList = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFilter = (e) => {
+    e.preventDefault();
+    fetchVisitors(1);
+  };
+
+  const handleReset = () => {
+    setDateRange({ startDate: '', endDate: '' });
+    // We need to fetch with empty dates immediately
+    const resetData = async () => {
+      setLoading(true);
+      try {
+        const [listRes, statsRes] = await Promise.all([
+          api.get('/visitors?page=1'),
+          api.get('/visitors/stats')
+        ]);
+        setVisitors(listRes.data.visitors);
+        setPagination(listRes.data.pagination);
+        setStats(statsRes.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    resetData();
   };
 
   useEffect(() => {
@@ -49,6 +86,40 @@ const VisitorList = () => {
           <p className="text-slate-500 mt-2">Real-time tracking of website visitors and their activities.</p>
         </div>
         
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <form onSubmit={handleFilter} className="flex flex-wrap items-center gap-4 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex items-center space-x-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">From</span>
+            <input 
+              type="date" 
+              className="admin-input py-1.5 px-3 text-xs" 
+              value={dateRange.startDate}
+              onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">To</span>
+            <input 
+              type="date" 
+              className="admin-input py-1.5 px-3 text-xs" 
+              value={dateRange.endDate}
+              onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+            />
+          </div>
+          <div className="flex space-x-2">
+            <button type="submit" className="btn btn-primary py-1.5 px-4 text-[10px] font-black uppercase tracking-widest">
+              Apply
+            </button>
+            <button 
+              type="button" 
+              onClick={handleReset}
+              className="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 border border-transparent hover:border-slate-200 rounded-lg transition-all"
+            >
+              Reset
+            </button>
+          </div>
+        </form>
+        
         <div className="flex space-x-4">
           <div className="bg-white px-6 py-4 rounded-2xl border border-slate-200 shadow-sm">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Total Visits</p>
@@ -59,6 +130,7 @@ const VisitorList = () => {
             <p className="text-2xl font-black text-primary-600">{stats?.uniqueVisitors || 0}</p>
           </div>
         </div>
+      </div>
       </div>
 
       <div className="card overflow-hidden">
