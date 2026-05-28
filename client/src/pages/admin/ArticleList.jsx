@@ -132,7 +132,9 @@ const ArticleList = () => {
                     <td className="px-6 py-4">
                       <span className={`text-[10px] uppercase font-black px-2 py-1 rounded tracking-widest ${article.status === 'PUBLISHED'
                           ? 'bg-emerald-100 text-emerald-700'
-                          : 'bg-slate-100 text-slate-500'
+                          : article.status === 'PENDING'
+                            ? 'bg-amber-100 text-amber-700 animate-pulse'
+                            : 'bg-slate-100 text-slate-500'
                         }`}>
                         {article.status}
                       </span>

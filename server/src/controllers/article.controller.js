@@ -175,9 +175,13 @@ const createArticle = async (req, res, next) => {
       metaDesc, 
       tags, 
       featuredImage,
+      pdfUrl,
       targetKeywords,
       readingTime 
     } = req.body;
+
+    const isAdmin = req.user.role === 'ADMIN';
+    const finalStatus = isAdmin ? (status || 'DRAFT') : 'PENDING';
 
     let slug = generateSlug(title);
 
@@ -203,13 +207,14 @@ const createArticle = async (req, res, next) => {
         excerpt: excerpt || content.replace(/<[^>]*>/g, '').substring(0, 200),
         categoryId,
         authorId: req.user.id,
-        status: status || 'DRAFT',
+        status: finalStatus,
         metaTitle: metaTitle || title,
         metaDesc: metaDesc || (excerpt || content.replace(/<[^>]*>/g, '').substring(0, 160)),
         featuredImage,
+        pdfUrl,
         targetKeywords,
         readingTime,
-        publishedAt: status === 'PUBLISHED' ? new Date() : null,
+        publishedAt: finalStatus === 'PUBLISHED' ? new Date() : null,
         tags: { connectOrCreate: tagConnect },
       },
       include: {
@@ -242,9 +247,12 @@ const updateArticle = async (req, res, next) => {
       metaDesc, 
       tags, 
       featuredImage,
+      pdfUrl,
       targetKeywords,
       readingTime 
     } = req.body;
+
+    const isAdmin = req.user.role === 'ADMIN';
 
     const existing = await prisma.article.findUnique({ where: { id } });
     if (!existing) {
@@ -267,11 +275,18 @@ const updateArticle = async (req, res, next) => {
     if (metaTitle !== undefined) data.metaTitle = metaTitle;
     if (metaDesc !== undefined) data.metaDesc = metaDesc;
     if (featuredImage !== undefined) data.featuredImage = featuredImage;
+    if (pdfUrl !== undefined) data.pdfUrl = pdfUrl;
     if (targetKeywords !== undefined) data.targetKeywords = targetKeywords;
     if (readingTime !== undefined) data.readingTime = readingTime;
     if (status) {
-      data.status = status;
-      if (status === 'PUBLISHED' && !existing.publishedAt) {
+      // Only admins can change status to PUBLISHED or ARCHIVED
+      if (!isAdmin && (status === 'PUBLISHED' || status === 'ARCHIVED')) {
+        data.status = 'PENDING';
+      } else {
+        data.status = status;
+      }
+      
+      if (data.status === 'PUBLISHED' && !existing.publishedAt) {
         data.publishedAt = new Date();
       }
     }
@@ -336,10 +351,11 @@ const deleteArticle = async (req, res, next) => {
  */
 const getStats = async (req, res, next) => {
   try {
-    const [totalArticles, published, drafts, totalCategories, totalViews, totalComments] = await Promise.all([
+    const [totalArticles, published, drafts, pending, totalCategories, totalViews, totalComments] = await Promise.all([
       prisma.article.count(),
       prisma.article.count({ where: { status: 'PUBLISHED' } }),
       prisma.article.count({ where: { status: 'DRAFT' } }),
+      prisma.article.count({ where: { status: 'PENDING' } }),
       prisma.category.count(),
       prisma.article.aggregate({ _sum: { views: true } }),
       prisma.comment.count(),
@@ -349,6 +365,7 @@ const getStats = async (req, res, next) => {
       totalArticles,
       published,
       drafts,
+      pending,
       totalCategories,
       totalViews: totalViews._sum.views || 0,
       totalComments,

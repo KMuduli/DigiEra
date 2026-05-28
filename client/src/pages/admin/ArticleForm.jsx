@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import api from '../../api/api';
 import Spinner from '../../components/Spinner';
+import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 
 import {
@@ -14,13 +15,16 @@ import {
   Loader2,
   Settings,
   AlignLeft,
-  Tag as TagIcon
+  Tag as TagIcon,
+  FileText,
+  Upload
 } from 'lucide-react';
 
 const ArticleForm = () => {
   const { id } = useParams();
   const isEdit = !!id;
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [loading, setLoading] = useState(isEdit);
   const [submitting, setSubmitting] = useState(false);
@@ -39,8 +43,10 @@ const ArticleForm = () => {
     targetKeywords: '',
     readingTime: '',
     featuredImage: '',
+    pdfUrl: '',
     tags: []
   });
+
 
   const [tagInput, setTagInput] = useState('');
 
@@ -71,6 +77,7 @@ const ArticleForm = () => {
             targetKeywords: art.targetKeywords || '',
             readingTime: art.readingTime || '',
             featuredImage: art.featuredImage || '',
+            pdfUrl: art.pdfUrl || '',
             tags: (art.tags || []).map(t => t.name)
           });
         }
@@ -136,6 +143,28 @@ const ArticleForm = () => {
     } catch (err) {
       console.error('Upload Error:', err);
       alert(`Image upload failed: ${err.message || 'Unknown error'}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      alert('Please upload a PDF file.');
+      return;
+    }
+    try {
+      setSubmitting(true);
+      const fileName = `${Date.now()}.pdf`;
+      const { error } = await supabase.storage.from('blog-images').upload(fileName, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from('blog-images').getPublicUrl(fileName);
+      setFormData(prev => ({ ...prev, pdfUrl: data.publicUrl }));
+    } catch (err) {
+      console.error('PDF Upload Error:', err);
+      alert(`PDF upload failed: ${err.message}`);
     } finally {
       setSubmitting(false);
     }
@@ -234,7 +263,7 @@ const ArticleForm = () => {
 
             {isEdit && formData.status === 'PUBLISHED'
               ? 'Update Post'
-              : 'Publish Article'}
+              : (user?.role === 'ADMIN' ? 'Publish Article' : 'Submit for Approval')}
           </button>
 
         </div>
@@ -464,6 +493,39 @@ const ArticleForm = () => {
                     onKeyDown={handleAddTag}
                   />
                 </div>
+              </div>
+              {/* PDF DOCUMENT */}
+              <div className="pt-4 border-t border-slate-100">
+                <label className="block text-sm font-bold mb-2 flex items-center">
+                  <FileText size={16} className="mr-1.5 text-slate-400" />
+                  PDF Attachment (Optional)
+                </label>
+
+                {formData.pdfUrl ? (
+                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <div className="flex items-center space-x-2 truncate">
+                      <FileText size={20} className="text-red-500 flex-shrink-0" />
+                      <span className="text-xs font-bold truncate">PDF Document Uploaded</span>
+                    </div>
+                    <button
+                      onClick={() => setFormData(prev => ({ ...prev, pdfUrl: '' }))}
+                      className="text-slate-400 hover:text-red-600 ml-2"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex items-center justify-center w-full p-4 border-2 border-dashed rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
+                    <Upload size={20} className="mr-2 text-slate-400" />
+                    <span className="text-xs font-bold uppercase tracking-tight">Upload PDF</span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".pdf"
+                      onChange={handlePdfUpload}
+                    />
+                  </label>
+                )}
               </div>
             </div>
           </div>
