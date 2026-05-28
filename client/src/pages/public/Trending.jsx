@@ -28,23 +28,23 @@ const Trending = () => {
 
   return (
     <div className="bg-white min-h-screen pb-32">
-      <SEOHead 
-        title="Trending Articles | DigitalEra" 
-        description="Discover the most popular and highly-viewed tech articles on DigitalEra." 
+      <SEOHead
+        title="Trending Articles | DigitalEra"
+        description="Discover the most popular and highly-viewed tech articles on DigitalEra."
       />
-      
+
       {/* ─── Cinematic Hero ─── */}
       <section className="bg-[#0b101e] pt-2 pb-16 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 blur-[150px] -mr-64 -mt-64"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[150px] -ml-64 -mb-64"></div>
-        
+
         <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
             <Flame size={14} className="mr-2 fill-orange-400 animate-pulse" />
             Viral Content
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter mb-4 leading-none drop-shadow-2xl">
-            Trending <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400 italic">Insights</span>
+            Trending<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400 italic">Insights</span>
           </h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto font-medium">
             Real-time feed of the most shared and discussed technical articles across our global developer community.
@@ -53,21 +53,20 @@ const Trending = () => {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 -mt-16 relative z-20">
-        
+
         {loading ? (
           <div className="pt-20"><Spinner /></div>
         ) : articles.length > 0 ? (
           <div className="space-y-24">
-            
+
             {/* ─── Top Tier ─── */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {topThree.map((article, index) => (
                 <div key={article.id} className="group relative">
-                  <div className={`absolute -top-6 -left-2 z-10 w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-2xl scale-110 group-hover:rotate-12 transition-all duration-500 ${
-                    index === 0 ? 'bg-gradient-to-br from-amber-400 to-orange-600' :
-                    index === 1 ? 'bg-gradient-to-br from-slate-400 to-slate-600' :
-                    'bg-gradient-to-br from-orange-600 to-red-700'
-                  }`}>
+                  <div className={`absolute -top-6 -left-2 z-10 w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-2xl scale-110 group-hover:rotate-12 transition-all duration-500 ${index === 0 ? 'bg-gradient-to-br from-amber-400 to-orange-600' :
+                      index === 1 ? 'bg-gradient-to-br from-slate-400 to-slate-600' :
+                        'bg-gradient-to-br from-orange-600 to-red-700'
+                    }`}>
                     {index + 1}
                   </div>
                   <ArticleCard article={article} />
