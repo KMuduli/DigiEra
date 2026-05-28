@@ -34,7 +34,7 @@ const Trending = () => {
       />
       
       {/* ─── Cinematic Hero ─── */}
-      <section className="bg-[#0b101e] pt-4 pb-32 relative overflow-hidden">
+      <section className="bg-[#0b101e] pt-2 pb-16 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 blur-[150px] -mr-64 -mt-64"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[150px] -ml-64 -mb-64"></div>
         
@@ -43,7 +43,7 @@ const Trending = () => {
             <Flame size={14} className="mr-2 fill-orange-400 animate-pulse" />
             Viral Content
           </div>
-          <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter mb-4 leading-none">
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4 leading-none">
             Trending <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300 italic">Insights</span>
           </h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto font-medium">
