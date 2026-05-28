@@ -27,7 +27,6 @@ const Footer = () => {
               <li><Link to="/" className="text-slate-500 hover:text-primary-600 transition-colors">About Us</Link></li>
               <li><Link to="/" className="text-slate-500 hover:text-primary-600 transition-colors">Contact</Link></li>
               <li><Link to="/" className="text-slate-500 hover:text-primary-600 transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/admin/login" className="text-slate-500 hover:text-primary-600 transition-colors">Admin Login</Link></li>
             </ul>
           </div>
         </div>
