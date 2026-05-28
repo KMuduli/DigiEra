@@ -19,14 +19,24 @@ import {
 
 const ArticleList = () => {
   const [articles, setArticles] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
 
   const fetchArticles = async (page = 1) => {
     try {
       setLoading(true);
-      const res = await api.get(`/articles/admin?page=${page}&search=${searchTerm}`);
+      const queryParams = new URLSearchParams({
+        page,
+        search: searchTerm,
+        categoryId: selectedCategory,
+        status: selectedStatus
+      }).toString();
+      
+      const res = await api.get(`/articles/admin?${queryParams}`);
       setArticles(res.data.articles);
       setPagination(res.data.pagination);
     } catch (err) {
@@ -36,9 +46,22 @@ const ArticleList = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get('/categories');
+      setCategories(res.data.categories);
+    } catch (err) {
+      console.error('Failed to fetch categories', err);
+    }
+  };
+
   useEffect(() => {
-    fetchArticles();
-  }, [searchTerm]);
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    fetchArticles(1);
+  }, [searchTerm, selectedCategory, selectedStatus]);
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
@@ -63,8 +86,8 @@ const ArticleList = () => {
         </Link>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-        <div className="relative w-full md:w-96">
+      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="relative w-full lg:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
             type="text"
@@ -74,10 +97,48 @@ const ArticleList = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex items-center space-x-2">
-          <button className="btn btn-secondary flex items-center text-sm py-2">
-            <Filter size={16} className="mr-2 text-slate-400" /> Filter
-          </button>
+        
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto items-center gap-3">
+          <div className="relative w-full sm:w-48">
+            <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <select
+              className="admin-input pl-9 text-sm py-2 h-10"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">All Categories</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="relative w-full sm:w-40">
+            <select
+              className="admin-input text-sm py-2 h-10"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              <option value="">All Status</option>
+              <option value="PUBLISHED">Published</option>
+              <option value="DRAFT">Draft</option>
+              <option value="PENDING">Pending</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+          </div>
+
+          {(selectedCategory || selectedStatus || searchTerm) && (
+            <button 
+              onClick={() => {
+                setSelectedCategory('');
+                setSelectedStatus('');
+                setSearchTerm('');
+              }}
+              className="text-xs font-bold text-red-500 hover:text-red-700 whitespace-nowrap"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
 

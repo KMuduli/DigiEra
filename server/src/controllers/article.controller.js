@@ -63,13 +63,15 @@ const getArticles = async (req, res, next) => {
 const getAdminArticles = async (req, res, next) => {
   try {
     const { skip, take, page, limit } = getPagination(req.query);
-    const { status, search } = req.query;
+    const { status, search, categoryId } = req.query;
 
     const where = {};
     if (status) where.status = status;
+    if (categoryId) where.categoryId = parseInt(categoryId, 10);
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
+        { slug: { contains: search, mode: 'insensitive' } },
       ];
     }
 
