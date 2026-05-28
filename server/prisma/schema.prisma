@@ -17,6 +17,13 @@ model User {
   name          String
   role          Role      @default(USER)
   avatar        String?
+  
+  // New profile fields
+  dob           DateTime?
+  gender        String?
+  city          String?
+  pincode       String?
+  
   articles      Article[]
   comments      Comment[]
   createdAt     DateTime  @default(now())

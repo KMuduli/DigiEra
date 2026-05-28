@@ -10,7 +10,7 @@ const config = require('../config/env');
  */
 const register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, dob, gender, city, pincode, avatar } = req.body;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -20,8 +20,17 @@ const register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword },
-      select: { id: true, name: true, email: true, role: true },
+      data: { 
+        name, 
+        email, 
+        password: hashedPassword,
+        dob: dob ? new Date(dob) : null,
+        gender,
+        city,
+        pincode,
+        avatar
+      },
+      select: { id: true, name: true, email: true, role: true, avatar: true },
     });
 
     res.status(201).json({ message: 'User registered successfully.', user });
@@ -89,7 +98,18 @@ const getMe = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
-      select: { id: true, name: true, email: true, role: true, avatar: true, createdAt: true },
+      select: { 
+        id: true, 
+        name: true, 
+        email: true, 
+        role: true, 
+        avatar: true, 
+        dob: true, 
+        gender: true, 
+        city: true, 
+        pincode: true, 
+        createdAt: true 
+      },
     });
     res.json({ user });
   } catch (err) {
