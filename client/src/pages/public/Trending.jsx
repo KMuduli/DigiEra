@@ -34,7 +34,7 @@ const Trending = () => {
       />
       
       {/* ─── Cinematic Hero ─── */}
-      <section className="bg-[#0b101e] pt-24 pb-32 relative overflow-hidden">
+      <section className="bg-[#0b101e] pt-8 pb-32 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 blur-[150px] -mr-64 -mt-64"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[150px] -ml-64 -mb-64"></div>
         
