@@ -43,7 +43,7 @@ const Trending = () => {
             <Flame size={14} className="mr-2 fill-orange-400 animate-pulse" />
             Viral Content
           </div>
-          <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter mb-4 leading-none">
+          <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter mb-4 leading-none">
             Trending <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300 italic">Insights</span>
           </h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto font-medium">
