@@ -80,7 +80,7 @@ model Article {
 model Comment {
   id          Int      @id @default(autoincrement())
   content     String   @db.Text
-  approved    Boolean  @default(true)
+  approved    Boolean  @default(false)
   
   // Relationships
   articleId   Int

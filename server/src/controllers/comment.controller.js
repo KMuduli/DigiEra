@@ -41,7 +41,8 @@ const createComment = async (req, res, next) => {
       data: { 
         content, 
         articleId: parseInt(articleId, 10),
-        userId: userId
+        userId: userId,
+        approved: req.user.role === 'ADMIN' // Auto-approve admins
       },
       include: {
         user: { select: { id: true, name: true, avatar: true } }
