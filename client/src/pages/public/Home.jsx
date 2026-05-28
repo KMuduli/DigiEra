@@ -38,11 +38,11 @@ const Home = () => {
   if (loading) return <Spinner />;
 
   return (
-    <div className="space-y-24 pb-24">
+    <div className="space-y-16 pb-12">
       <SEOHead title="Home" description="DigitalEra - Next-generation tech insights and programming tutorials." />
       
       {/* ─── Hero Section ─── */}
-      <section className="relative pt-8 pb-32 overflow-hidden">
+      <section className="relative pt-8 pb-16 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -69,7 +69,7 @@ const Home = () => {
               </div>
 
               {/* Trust Badge */}
-              <div className="mt-12 flex items-center space-x-6 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+              <div className="mt-8 flex items-center space-x-6 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
                 <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Trusted by readers from</div>
                 <div className="h-6 w-px bg-slate-200"></div>
                 <div className="flex space-x-4 font-black italic text-lg text-slate-900">
