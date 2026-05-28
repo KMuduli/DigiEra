@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Calendar, User, ChevronRight } from 'lucide-react';
+import { Calendar, User, ChevronRight, Clock } from 'lucide-react';
 import { getImageUrl } from '../utils/image';
 
 const ArticleCard = ({ article }) => {
-  const { title, slug, excerpt, featuredImage, createdAt, author, category } = article;
+  const { title, slug, excerpt, featuredImage, createdAt, author, category, readingTime } = article;
   
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
     month: 'short',
@@ -27,15 +27,17 @@ const ArticleCard = ({ article }) => {
       </Link>
       
       <div className="p-6">
-        <div className="flex items-center space-x-4 text-xs text-slate-400 mb-3">
+        <div className="flex items-center space-x-4 text-xs text-slate-400 mb-3 font-semibold uppercase tracking-wider">
           <div className="flex items-center">
-            <User size={14} className="mr-1" />
-            <span>{author?.name || 'DigitalEra Team'}</span>
-          </div>
-          <div className="flex items-center">
-            <Calendar size={14} className="mr-1" />
+            <Calendar size={14} className="mr-1.5" />
             <span>{formattedDate}</span>
           </div>
+          {readingTime && (
+            <div className="flex items-center text-primary-600">
+              <Clock size={14} className="mr-1.5" />
+              <span>{readingTime}</span>
+            </div>
+          )}
         </div>
         
         <Link to={`/article/${slug}`}>
